@@ -16,8 +16,6 @@
         const n = new URL(e.request.url);
         n.protocol.startsWith("http") && (n.hostname === self.location.hostname && n.port !== self.location.port || (n.host === self.location.host && t.has(n.pathname) ? e.respondWith(caches.match(e.request)) : "only-if-cached" !== e.request.cache && e.respondWith(caches.open("offline1602891945499").then(async t => {
             try {
-		const c = await t.match(e.request);
-                if (c) return c;
                 const n = await fetch(e.request);
                 return t.put(e.request, n.clone()), n
             } catch (n) {
