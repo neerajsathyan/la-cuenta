@@ -11,18 +11,22 @@
             for (const t of e) "cache1602891945499" !== t && await caches.delete(t);
             self.clients.claim()
         }))
-    }), self.addEventListener("fetch", e => {
-        if ("GET" !== e.request.method || e.request.headers.has("range")) return;
-        const n = new URL(e.request.url);
-        n.protocol.startsWith("http") && (n.hostname === self.location.hostname && n.port !== self.location.port || (n.host === self.location.host && t.has(n.pathname) ? e.respondWith(caches.match(e.request)) : "only-if-cached" !== e.request.cache && e.respondWith(caches.open("offline1602891945499").then(async t => {
-            try {
-                const n = await fetch(e.request);
-                return t.put(e.request, n.clone()), n
-            } catch (n) {
-                const c = await t.match(e.request);
-                if (c) return c;
-                throw n
-            }
-        }))))
+    }), this.addEventListener('fetch', function (event) {
+    let originalResponse;
+
+    event.respondWith(async function () {
+        const cache = await caches.open(cacheVersion)
+
+        const cachedResponsePromise = await cache.match(event.request.clone())
+        const networkResponsePromise = fetch(event.request)
+
+        event.waitUntil(async function () {
+            const networkResponse = await networkResponsePromise
+            await cache.put(event.request.clone(), networkResponse.clone())
+        }())
+
+        return cachedResponsePromise || networkResponsePromise
+    }());
+});
     })
 }();
