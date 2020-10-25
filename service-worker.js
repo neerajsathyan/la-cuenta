@@ -15,17 +15,17 @@
   let originalResponse;
 
   event.respondWith(async function () {
-      const cache = await caches.open(cacheVersion)
+//       const cache = await caches.open(cacheVersion)
 
-      const cachedResponsePromise = await cache.match(event.request.clone())
+//       const cachedResponsePromise = await cache.match(event.request.clone())
       const networkResponsePromise = fetch(event.request)
 
       event.waitUntil(async function () {
           const networkResponse = await networkResponsePromise
-          await cache.put(event.request.clone(), networkResponse.clone())
+//           await cache.put(event.request.clone(), networkResponse.clone())
       }())
 
-      return cachedResponsePromise || networkResponsePromise
+      return networkResponsePromise
   }());
   });
 }
